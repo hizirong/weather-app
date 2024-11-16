@@ -14,7 +14,7 @@ def index():
 
 @app.route('/weather/<city>')
 def get_weather(city):
-    api_key = os.getenv('WEATHER_API_KEY')
+    api_key = os.getenv('WEATHER_API_KEY') or app.config.get('WEATHER_API_KEY')
     if not api_key:
         return jsonify({"error": "API key not configured"}), 500
         
@@ -22,7 +22,7 @@ def get_weather(city):
     
     try:
         response = requests.get(url)
-        response.raise_for_status()  # 會引發例外如果狀態碼不是 200
+        response.raise_for_status()
         data = response.json()
         
         weather_data = {
@@ -34,14 +34,8 @@ def get_weather(city):
             "icon": data["weather"][0]["icon"]
         }
         return jsonify(weather_data)
-    except requests.exceptions.RequestException as e:
-        print(f"API Request Error: {str(e)}")  # 加入日誌
-        return jsonify({"error": "Error fetching weather data"}), 500
-    except KeyError as e:
-        print(f"Data Parsing Error: {str(e)}")  # 加入日誌
-        return jsonify({"error": "Error parsing weather data"}), 500
     except Exception as e:
-        print(f"Unexpected Error: {str(e)}")  # 加入日誌
+        print(f"Error: {str(e)}")  # 增加日誌
         return jsonify({"error": str(e)}), 500
 
 @app.route('/health')
