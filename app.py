@@ -28,5 +28,9 @@ def get_weather(city):
 def health():
     return jsonify({"status": "healthy"})
 
+@app.route('/version')
+def version():
+    return jsonify({"version": "1.0.1", "status": "running"})
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
