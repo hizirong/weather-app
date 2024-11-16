@@ -7,28 +7,26 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # 添加權限設定
-    permissions:
-      contents: "read"
-      id-token: "write"
-
     steps:
       - uses: actions/checkout@v2
 
-      - id: "auth"
-        name: "Authenticate to Google Cloud"
-        uses: "google-github-actions/auth@v1"
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
         with:
-          credentials_json: "${{ secrets.GCP_SA_KEY }}"
+          project_id: weather-app-demo-11
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
 
-      - name: "Set up Cloud SDK"
-        uses: "google-github-actions/setup-gcloud@v1"
+      - name: Enable APIs
+        run: |
+          gcloud services enable \
+            run.googleapis.com \
+            artifactregistry.googleapis.com \
+            cloudbuild.googleapis.com
 
-      - name: "Deploy to Cloud Run"
-        run: |-
+      - name: Deploy to Cloud Run
+        run: |
           gcloud run deploy weather-app \
             --source . \
-            --project weather-app-demo-11 \
-            --region asia-east1 \
             --platform managed \
+            --region asia-east1 \
             --allow-unauthenticated
