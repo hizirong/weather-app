@@ -19,15 +19,10 @@ jobs:
         uses: "google-github-actions/auth@v1"
         with:
           credentials_json: "${{ secrets.GCP_SA_KEY }}"
+          service_account: "github-action-demo@weather-app-demo-11.iam.gserviceaccount.com"
 
       - name: "Set up Cloud SDK"
         uses: "google-github-actions/setup-gcloud@v1"
-
-      - name: "Enable APIs"
-        run: |-
-          gcloud services enable run.googleapis.com
-          gcloud services enable artifactregistry.googleapis.com
-          gcloud services enable cloudbuild.googleapis.com
 
       - name: "Deploy to Cloud Run"
         run: |-
