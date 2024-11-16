@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .weather-card {
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-400 to-purple-500 p-8">
+    <div class="max-w-md mx-auto">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h1 class="text-2xl font-bold text-center mb-4">Weather Checker</h1>
+            <div class="flex gap-2">
+                <input 
+                    type="text" 
+                    id="cityInput" 
+                    placeholder="Enter city name"
+                    class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                <button 
+                    onclick="getWeather()"
+                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                    Check
+                </button>
+            </div>
+        </div>
+        
+        <div id="weatherResult" class="hidden weather-card rounded-lg shadow-lg p-6">
+            <div class="text-center">
+                <img id="weatherIcon" src="" alt="Weather icon" class="mx-auto mb-2">
+                <h2 id="cityName" class="text-xl font-bold mb-2"></h2>
+                <div id="temperature" class="text-3xl font-bold mb-2"></div>
+                <div id="description" class="text-lg mb-4"></div>
+                <div class="grid grid-cols-2 gap-4 text-center">
+                    <div>
+                        <div class="text-gray-600">Humidity</div>
+                        <div id="humidity" class="font-bold"></div>
+                    </div>
+                    <div>
+                        <div class="text-gray-600">Wind Speed</div>
+                        <div id="windSpeed" class="font-bold"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function getWeather() {
+            const city = document.getElementById('cityInput').value;
+            if (!city) return;
+
+            try {
+                const response = await fetch(`/weather/${city}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('City not found or error occurred');
+                    return;
+                }
+
+                document.getElementById('weatherResult').classList.remove('hidden');
+                document.getElementById('cityName').textContent = data.city;
+                document.getElementById('temperature').textContent = `${data.temperature}°C`;
+                document.getElementById('description').textContent = data.description;
+                document.getElementById('humidity').textContent = `${data.humidity}%`;
+                document.getElementById('windSpeed').textContent = `${data.wind_speed} m/s`;
+                document.getElementById('weatherIcon').src = 
+                    `http://openweathermap.org/img/wn/${data.icon}@2x.png`;
+            } catch (error) {
+                alert('Error fetching weather data');
+            }
+        }
+
+        // 按 Enter 鍵也可以查詢
+        document.getElementById('cityInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                getWeather();
+            }
+        });
+    </script>
+</body>
+</html>

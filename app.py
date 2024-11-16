@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template, request
 import os
 import requests
 from dotenv import load_dotenv
@@ -6,6 +6,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+
+# 新增前端頁面路由
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/weather/<city>')
 def get_weather(city):
@@ -18,7 +23,10 @@ def get_weather(city):
         weather_data = {
             "city": city,
             "temperature": data["main"]["temp"],
-            "description": data["weather"][0]["description"]
+            "description": data["weather"][0]["description"],
+            "humidity": data["main"]["humidity"],
+            "wind_speed": data["wind"]["speed"],
+            "icon": data["weather"][0]["icon"]
         }
         return jsonify(weather_data)
     except Exception as e:
@@ -28,9 +36,5 @@ def get_weather(city):
 def health():
     return jsonify({"status": "healthy"})
 
-@app.route('/version')
-def version():
-    return jsonify({"version": "1.0.1", "status": "running"})
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=8080, debug=True)
