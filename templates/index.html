@@ -61,8 +61,8 @@
                 const response = await fetch(`/weather/${city}`);
                 const data = await response.json();
 
-                if (data.error) {
-                    alert('City not found or error occurred');
+                if (!response.ok) {
+                    alert(data.error || 'An error occurred');
                     return;
                 }
 
@@ -75,10 +75,9 @@
                 document.getElementById('weatherIcon').src = 
                     `http://openweathermap.org/img/wn/${data.icon}@2x.png`;
             } catch (error) {
-                alert('Error fetching weather data');
+                alert('Error fetching weather data: ' + error.message);
             }
         }
-
         // 按 Enter 鍵也可以查詢
         document.getElementById('cityInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
