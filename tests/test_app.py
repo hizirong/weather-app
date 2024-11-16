@@ -15,7 +15,6 @@ def test_health_check(client):
 
 def test_weather_endpoint(client, requests_mock):
     """Test weather endpoint with mocked API response"""
-    # 修正 mock response 格式
     mock_response = {
         "main": {
             "temp": 20,
@@ -32,9 +31,9 @@ def test_weather_endpoint(client, requests_mock):
         }
     }
 
-    # 確保 URL 完全匹配，包含 query parameters
+    # 修正：使用具體的 URL pattern
     requests_mock.get(
-        requests_mock.ANY,  # 這樣可以匹配任何 URL
+        "http://api.openweathermap.org/data/2.5/weather?q=taipei&appid=*&units=metric",
         json=mock_response
     )
     
@@ -42,6 +41,9 @@ def test_weather_endpoint(client, requests_mock):
     assert response.status_code == 200
     
     data = response.get_json()
-    expected_fields = ["city", "temperature", "description", "humidity", "wind_speed", "icon"]
-    for field in expected_fields:
-        assert field in data
+    assert "city" in data
+    assert "temperature" in data
+    assert "description" in data
+    assert "humidity" in data
+    assert "wind_speed" in data
+    assert "icon" in data
