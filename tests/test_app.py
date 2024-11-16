@@ -15,15 +15,31 @@ def test_health_check(client):
 
 def test_weather_endpoint(client, requests_mock):
     """Test weather endpoint with mocked API response"""
-    # Mock the external API call
+    # Mock the external API call with complete response structure
     mock_response = {
-        "main": {"temp": 20, "humidity": 50},
-        "weather": [{"description": "clear sky"}]
+        "main": {
+            "temp": 20,
+            "humidity": 50
+        },
+        "weather": [{
+            "description": "clear sky",
+            "icon": "01d"
+        }],
+        "wind": {
+            "speed": 5.0
+        }
     }
-    requests_mock.get("http://api.openweathermap.org/data/2.5/weather", json=mock_response)
+    requests_mock.get(
+        "http://api.openweathermap.org/data/2.5/weather",
+        json=mock_response
+    )
     
     response = client.get('/weather/taipei')
     assert response.status_code == 200
+    
     data = response.get_json()
     assert "temperature" in data
     assert "description" in data
+    assert "humidity" in data
+    assert "wind_speed" in data
+    assert "icon" in data
