@@ -1,9 +1,8 @@
 #### 練習：
 
-本地開發＋自動化測試＋Docker容器化並透過GitHub Action做自動化部署到GCP
+本地開發＋自動化測試＋ Docker 容器化並透過 GitHub Action 做自動化部署到 GCP
 
-![alt text](image.png)
-
+![alt text](image-1.png)
 
 ```mermaid
 graph LR
